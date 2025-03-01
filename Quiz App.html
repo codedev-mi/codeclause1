@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Quiz Game</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      background-color: #f0f8ff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .quiz-container {
+      max-width: 700px;
+      margin: 50px auto;
+      background: linear-gradient(135deg, #ffffff, #dfe9f3);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .question {
+      font-size: 1.8rem;
+      margin-bottom: 30px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .option {
+      padding: 15px;
+      font-size: 1rem;
+      text-align: center;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #f9f9f9;
+      transition: all 0.3s ease-in-out;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .option:hover {
+      transform: scale(1.05);
+      background: #e6f7ff;
+      border-color: #00aaff;
+    }
+
+    .option.correct {
+      background: #d4edda;
+      border-color: #28a745;
+    }
+
+    .option.wrong {
+      background: #f8d7da;
+      border-color: #dc3545;
+    }
+
+    .score {
+      font-size: 1.5rem;
+      margin-top: 30px;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .btn {
+      margin-top: 30px;
+      padding: 15px 30px;
+      font-size: 1rem;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #0056b3;
+    }
+
+    @media (max-width: 768px) {
+      .options {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="quiz-container">
+    <div id="quiz">
+      <div class="question" id="question">Question will appear here</div>
+      <div class="options" id="options"></div>
+      <button class="btn" id="next-btn" style="display: none;">Next</button>
+      <div class="score" id="score" style="display: none;"></div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What is the capital of France?",
+        options: ["Berlin", "Madrid", "Rome", "Paris"],
+        answer: 3,
+      },
+      {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Venus", "Mars", "Jupiter", "Saturn"],
+        answer: 1,
+      },
+      {
+        question: "What is the largest planet in our solar system?",
+        options: ["Earth", "Mars", "Jupiter", "Saturn"],
+        answer: 2,
+      },
+      {
+        question: "Which country is known as the Land of the Rising Sun?",
+        options: ["China", "Japan", "South Korea", "Thailand"],
+        answer: 1,
+      },
+      {
+        question: "Which country is known as the Land of the Rising Sun?",
+        options: ["China", "Japan", "South Korea", "Thailand"],
+        answer: 1,
+      },
+      {
+        question: "What is the longest river in the world?",
+        options: ["Amazon River", "Nile River", "Yangtze River", "Mississippi River"],
+        answer: 2,
+      },
+      {
+        question: "What is the chemical symbol for water?",
+        options: ["H2O", "O2", "CO2", "NaCl"],
+        answer: 0,
+      },
+      {
+        question: "Who is known as the Father of the Computer?",
+        options: ["Charles Babbage", "Alan Turing", "Ada Lovelace", "John von Neumann"],
+        answer: 0,
+      },
+      {
+        question: "Which programming language is primarily used for Android app development?",
+        options: ["Java", "Swift", "Python", "Kotlin"],
+        answer: 3,
+      },
+      {
+        question: "Which programming language is known as the backbone of web development?",
+        options: ["Python", "JavaScript", "C++", "Ruby"],
+        answer: 1,
+      },
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const questionElement = document.getElementById("question");
+    const optionsElement = document.getElementById("options");
+    const nextButton = document.getElementById("next-btn");
+    const scoreElement = document.getElementById("score");
+
+    function loadQuestion() {
+      const currentQuestion = questions[currentQuestionIndex];
+      questionElement.textContent = currentQuestion.question;
+      optionsElement.innerHTML = "";
+
+      currentQuestion.options.forEach((option, index) => {
+        const button = document.createElement("div");
+        button.textContent = option;
+        button.classList.add("option");
+        button.onclick = () => checkAnswer(index);
+        optionsElement.appendChild(button);
+      });
+    }
+
+    function checkAnswer(selectedIndex) {
+      const correctIndex = questions[currentQuestionIndex].answer;
+      const options = document.querySelectorAll(".option");
+
+      if (selectedIndex === correctIndex) {
+        options[selectedIndex].classList.add("correct");
+        score++;
+      } else {
+        options[selectedIndex].classList.add("wrong");
+        options[correctIndex].classList.add("correct");
+      }
+
+      options.forEach(option => (option.onclick = null));
+      nextButton.style.display = "block";
+    }
+
+    function showScore() {
+      questionElement.style.display = "none";
+      optionsElement.style.display = "none";
+      nextButton.style.display = "none";
+      scoreElement.style.display = "block";
+      scoreElement.textContent = `Your score: ${score}/${questions.length}`;
+    }
+
+    nextButton.onclick = () => {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        loadQuestion();
+        nextButton.style.display = "none";
+      } else {
+        showScore();
+      }
+    };
+
+    loadQuestion();
+  </script>
+</body>
+</html>
